@@ -1,0 +1,5 @@
+#!/bin/bash
+source ~/OpenFOAM/OpenFOAM-v1912/etc/bashrc 
+blockMesh
+pimpleFoam
+paraFoam
