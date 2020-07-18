@@ -22,8 +22,15 @@ boundaryField
 {
     movingWall
     {
-        type            uniformFixedValue;
-        uniformValue    constant 1;
+        type            codedFixedValue;
+        value           uniform 0;
+        name		 oscillatingFixedValue;
+        
+        code
+        #{
+        	const scalar t = this->db().time().value();
+        	operator==(0.05*sin(6.28*t*50));
+        #};
     }
     farFieldMoving
     {
