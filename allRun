@@ -1,5 +1,6 @@
 #!/bin/bash
 source ~/OpenFOAM/OpenFOAM-v1912/etc/bashrc 
 blockMesh
-pimpleFoam
+decomposePar
+mpirun -np 8 pimpleFoam -parallel
 paraFoam
