@@ -1,0 +1,5 @@
+#!/bin/bash
+rm -rf ./0.*
+rm -rf ./processor*
+rm -rf ./postProcessing
+rm -rf ./dynamicCode/
