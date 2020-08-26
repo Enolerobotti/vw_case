@@ -43,8 +43,7 @@ boundaryField
     }
     axis
     {
-	type            uniformFixedValue;
-        uniformValue    constant 0;
+	type            symmetryPlane;
     }
     left
     {
