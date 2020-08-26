@@ -41,6 +41,11 @@ boundaryField
         type            uniformFixedValue;
         uniformValue    constant 0;
     }
+    axis
+    {
+	type            uniformFixedValue;
+        uniformValue    constant 0;
+    }
     left
     {
         type            uniformFixedValue;
@@ -52,11 +57,11 @@ boundaryField
     }
     back
     {
-        type            wedge;
+        type            empty;
     }
     front
     {
-        type            wedge;
+        type            empty;
     }
 }
 

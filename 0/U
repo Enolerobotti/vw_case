@@ -36,6 +36,11 @@ boundaryField
         type            noSlip;
     }
 
+    axis
+    {
+	type            symmetryPlane;
+    }
+
     left
     {
         type            pressureInletOutletVelocity;
@@ -49,12 +54,12 @@ boundaryField
 
     back
     {
-        type            wedge;
+        type            empty;
     }
 
     front
     {
-        type            wedge;
+        type            empty;
     }
 }
 

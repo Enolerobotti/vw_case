@@ -34,7 +34,10 @@ boundaryField
     {
         type            zeroGradient;
     }
-
+    axis
+    {
+	type            symmetryPlane;
+    }
     left
     {
         type            totalPressure;
@@ -48,12 +51,12 @@ boundaryField
 
     back
     {
-        type            wedge;
+        type            empty;
     }
 
     front
     {
-        type            wedge;
+        type            empty;
     }
 }
 

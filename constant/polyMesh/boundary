@@ -40,36 +40,36 @@ FoamFile
     }
     axis
     {
-        type            empty;
-        inGroups        1(empty);
-        nFaces          0;
+        type            symmetryPlane;
+        inGroups        1(symmetryPlane);
+        nFaces          30;
         startFace       4325;
     }
     left
     {
         type            patch;
         nFaces          30;
-        startFace       4325;
+        startFace       4355;
     }
     farField
     {
         type            patch;
         nFaces          30;
-        startFace       4355;
+        startFace       4385;
     }
     back
     {
-        type            wedge;
-        inGroups        1(wedge);
+        type            empty;
+        inGroups        1(empty);
         nFaces          2150;
-        startFace       4385;
+        startFace       4415;
     }
     front
     {
-        type            wedge;
-        inGroups        1(wedge);
+        type            empty;
+        inGroups        1(empty);
         nFaces          2150;
-        startFace       6535;
+        startFace       6565;
     }
 )
 
