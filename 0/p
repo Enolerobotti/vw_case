@@ -30,9 +30,10 @@ boundaryField
         type            zeroGradient;
     }
 
-    fixedWall
+    right
     {
-        type            zeroGradient;
+        type            totalPressure;
+        p0              $internalField;
     }
     axis
     {

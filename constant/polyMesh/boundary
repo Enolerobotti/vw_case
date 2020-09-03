@@ -31,7 +31,7 @@ FoamFile
         nFaces          50;
         startFace       8220;
     }
-    fixedWall
+    right
     {
         type            wall;
         inGroups        1(wall);

@@ -77,7 +77,7 @@ boundary
             (9 17 18 10)
         );
     }
-    fixedWall
+    right
     {
         type wall;
         faces
