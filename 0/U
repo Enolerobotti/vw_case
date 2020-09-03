@@ -31,9 +31,10 @@ boundaryField
         type            noSlip;
     }
 
-    fixedWall
+    right
     {
-        type            noSlip;
+        type            pressureInletOutletVelocity;
+        value           $internalField;
     }
 
     axis
