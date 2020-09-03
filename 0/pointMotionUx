@@ -29,7 +29,7 @@ boundaryField
         code
         #{
         	const scalar t = this->db().time().value();
-        	operator==(0.5*cos(6.28*t*50));
+        	operator==(0.01*cos(6.28*t*50));
         #};
     }
     farFieldMoving
