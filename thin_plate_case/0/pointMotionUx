@@ -1,0 +1,67 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v1912                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       pointScalarField;
+    object      pointMotionUx;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 1 -1 0 0 0 0];
+
+internalField   uniform 0;
+
+boundaryField
+{
+    movingWall
+    {
+        type            codedFixedValue;
+        value           uniform 0;
+        name		 oscillatingFixedValue;
+        
+        code
+        #{
+        	const scalar t = this->db().time().value();
+        	operator==(0.01*cos(6.28*t*50));
+        #};
+    }
+    farFieldMoving
+    {
+        type            slip;
+    }
+    right
+    {
+        type            uniformFixedValue;
+        uniformValue    constant 0;
+    }
+    axis
+    {
+	type            symmetryPlane;
+    }
+    left
+    {
+        type            uniformFixedValue;
+        uniformValue    constant 0;
+    }
+    farField
+    {
+        type            slip;
+    }
+    back
+    {
+        type            empty;
+    }
+    front
+    {
+        type            empty;
+    }
+}
+
+// ************************************************************************* //
