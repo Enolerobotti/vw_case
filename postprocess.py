@@ -24,6 +24,6 @@ def animate(fn):
 if __name__ == '__main__':
     filename = [
         "./thin_plate_case/thin_plate_case.foam",
-        "./thin_plate_case/thick_plate_case.foam"
+        "./thick_plate_case/thick_plate_case.foam" # not exists yet
     ]
     animate(filename[0])

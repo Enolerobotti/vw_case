@@ -1,0 +1,5 @@
+.idea
+**/polyMesh
+**/0.*
+venv
+**/processor*
