@@ -15,7 +15,7 @@ class Vtk2Numpy:
     def __call__(self, verbose=False, *args, **kwargs):
         fields = {}
         coordinates = {}
-        for t in [0] + self.timesteps:
+        for t in self.timesteps:
             self.update(time=t, verbose=verbose)
             dataset = self.vtk_wrapper()
             fields[str(t)] = {k: self.to_numpy(dataset, k) for k in dataset.PointData.keys()}
@@ -30,7 +30,7 @@ class Vtk2Numpy:
             print(self.data)
 
     def get_time(self):
-        return np.array(self.casefoam.TimestepValues)
+        return np.append(np.array([0]), np.array(self.casefoam.TimestepValues))
 
     def get_coordinates(self):
         assert self.data.GetNumberOfBlocks() == 1, "Other is not a use case for current class"
