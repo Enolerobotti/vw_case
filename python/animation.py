@@ -2,16 +2,18 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import numpy as np
 import joblib
+from python.utils import DataClean
 
-class AnimatedQuiver(object):
+
+class AnimatedQuiver(DataClean):
     """An animated scatter plot using matplotlib.animations.FuncAnimation.
         inspired by `https://stackoverflow.com/questions/9401658/how-to-animate-a-scatter-plot`
     """
     def __init__(self, coordinates:dict, fields:dict, field_label: str = 'U', criterion=1e-20):
+        super().__init__(criterion)
         self.coordinates = coordinates
         self.fields = fields
         self.field_label = field_label
-        self.criterion = criterion
         self.stream = self.data_stream()
 
         # Setup the figure and axes...
@@ -50,20 +52,6 @@ class AnimatedQuiver(object):
         # We need to return the updated artist for FuncAnimation to draw..
         # Note that it expects a sequence of artists, thus the trailing comma.
         return self.artist,
-
-    def check(self, p, n):
-        assert np.max(np.abs(p - n)) < self.criterion, f"Too strong criterion = {self.criterion}"
-
-    def filter_2d(self, coords, field):
-        mask_p = coords[:, 2] >= 0
-        mask_n = coords[:, 2] < 0
-        coo_p = coords[mask_p][:, :2]
-        coo_n = coords[mask_n][:, :2]
-        self.check(coo_p, coo_n)
-        fi_p = field[mask_p][:, :2]
-        fi_n = field[mask_n][:, :2]
-        self.check(fi_p, fi_n)
-        return (coo_p + coo_n) / 2, (fi_p + fi_n) / 2
 
 
 if __name__ == '__main__':
