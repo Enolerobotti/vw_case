@@ -5,9 +5,11 @@ class TestVtk2Numpy:
     def test_vtk2numpy(self):
         filename = '../thin_plate_case/thin_plate_case.foam'
         vtk2numpy = Vtk2Numpy(filename)
-        result = vtk2numpy(False)
+        result, coord = vtk2numpy(False)
         assert ((result['0.002']['U'] == result['0.002']['U']).all())
         assert not ((result['0.002']['U'] == result['0.004']['U']).all())
+        assert ((coord['0.002'] == coord['0.002']).all())
+        assert not ((coord['0.002'] == coord['0.004']).all())
         print('ok')
 
 if __name__ == '__main__':

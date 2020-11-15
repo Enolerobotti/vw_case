@@ -10,30 +10,38 @@ class Vtk2Numpy:
         filename = os.path.abspath(filename)
         self.casefoam = OpenFOAMReader(FileName=filename)
         self.timesteps = self.get_time()
+        self.data = None
 
     def __call__(self, verbose=False, *args, **kwargs):
-        res = {}
-        for t in self.timesteps:
-            dataset = self.vtk_wrapper(time=t, verbose=verbose)
-            res[str(t)] = {k: self.to_numpy(dataset, k) for k in dataset.PointData.keys()}
-        return res
+        fields = {}
+        coordinates = {}
+        for t in [0] + self.timesteps:
+            self.update(time=t, verbose=verbose)
+            dataset = self.vtk_wrapper()
+            fields[str(t)] = {k: self.to_numpy(dataset, k) for k in dataset.PointData.keys()}
+            coordinates[str(t)] = self.get_coordinates()
+        return fields, coordinates
+
+    def update(self, time, verbose):
+        self.casefoam.SMProxy.UpdatePipeline(time)
+        self.casefoam.UpdatePipelineInformation()
+        self.data = Fetch(self.casefoam)
+        if verbose:
+            print(self.data)
 
     def get_time(self):
         return np.array(self.casefoam.TimestepValues)
 
-    def vtk_wrapper(self, time, verbose):
-        self.casefoam.SMProxy.UpdatePipeline(time)
-        self.casefoam.UpdatePipelineInformation()
-        data = Fetch(self.casefoam)
-        if verbose:
-            print(data)
-        return dsa.WrapDataObject(data)
+    def get_coordinates(self):
+        assert self.data.GetNumberOfBlocks() == 1, "Other is not a use case for current class"
+        block = self.data.GetBlock(0)
+        return np.array([block.GetPoint(point_idx) for point_idx in range(block.GetNumberOfPoints())])
+
+    def vtk_wrapper(self):
+        return dsa.WrapDataObject(self.data)
 
     @staticmethod
     def to_numpy(vtk_data, key:str):
         vtk_arr = vtk_data.PointData[key].GetArrays()
         assert len(vtk_arr) == 1, "Other unexpected"
         return vtk_to_numpy(vtk_arr[0])
-
-
-
