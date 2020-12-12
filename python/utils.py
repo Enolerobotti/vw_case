@@ -24,12 +24,13 @@ class DataClean:
 
 
 class ContinuousField:
+    flag = 1
     def __init__(self, xy, uv, _range=1e-3, resolution = 100):
         assert _range > 0
         self.field = np.hstack([xy, uv])
         self._range = _range
         self.resolution = resolution
-        self.limit.terminal = False
+        ContinuousField.limit.terminal = True
 
     def get_neighbourhood(self, x, y):
         x_min = x - self._range
@@ -71,18 +72,17 @@ class ContinuousField:
             u, v = self.velocity_function(x, y[0])
             return -u/v
         except Exception:
-            self.limit.terminal = True
+            self.flag = 0
 
     def __call__(self, y, x):
         try:
             u, v = self.velocity_function(x[0], y)
             return -v / u
         except Exception as e:
-            self.limit.terminal = True
+            self.flag = 0
 
-    @staticmethod
-    def limit(t, y):
-        return 0
+    def limit(self, t, y):
+        return self.flag
 
 
 if __name__ == '__main__':
@@ -97,19 +97,14 @@ if __name__ == '__main__':
     field = fi[time]['U']
     xy_, field = cl.filter_2d(coords, field)
     # -20, -14, -6, 0
-    # x0 = []
-    # y0 = []
-    # for i in range(-15, -5):
-    #     print(i)
-    #     sol=solve_ivp(ContinuousField(xy_, field), [0, 0.014], [i * scale], max_step=1e-4, events=limit)
-    #     y0.append(sol.t)
-    #     x0.append(sol.y[0])
-    # plt.plot(np.hstack(x0), np.hstack(y0))
-    # plt.show()
-    x = -8*scale
+    x = -12*scale
 
-    sol_inverse = solve_ivp(ContinuousField(xy_, field).inverse, [x, x+1e-2], [1e-4], max_step=1e-4, events=ContinuousField.limit)
-    sol_direct = solve_ivp(ContinuousField(xy_, field), [1e-4, 6e-3], [x], max_step=1e-4, events=ContinuousField.limit)
+    cf_inverse = ContinuousField(xy_, field)
+    sol_inverse = solve_ivp(cf_inverse.inverse, [x, x-5e-2], [1e-4], max_step=1e-4, events=cf_inverse.limit)
+
+    cf_direct = ContinuousField(xy_, field)
+    sol_direct = solve_ivp(cf_direct, [2e-4, 7e-3], [x], max_step=1e-4, events=cf_direct.limit)
     plt.plot(sol_inverse.t, sol_inverse.y[0])
+
     plt.plot(sol_direct.y[0], sol_direct.t)
     plt.show()
