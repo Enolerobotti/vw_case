@@ -4,7 +4,6 @@ import joblib
 import numpy as np
 import matplotlib.tri as tri
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 from scipy.integrate import solve_ivp
 
 class DataClean:
@@ -92,10 +91,12 @@ class ContinuousField:
 
     def __call__(self, x_line, y_line):
         magnitude = []
+        sign_v=[]
         for x, y in zip(x_line, y_line):
             u, v = self.velocity_function(x, y)
+            sign_v.append(np.sign(u))
             magnitude.append((u ** 2 + v ** 2) ** .5)
-        return np.array(magnitude)
+        return np.vstack([magnitude, sign_v])
 
 
 class ViscousWaveLines:
@@ -126,7 +127,10 @@ class ViscousWaveLines:
             x_line = sol_forward.y[0]
             y_line = sol_forward.t
         magnitude = cf_forward(x_line, y_line)
-        return x_line/ self.delta, y_line/ self.delta, magnitude
+        magnitude[0, magnitude[0,:] >= 1e10] = np.nan
+        magnitude = magnitude[0,:] * magnitude[1,:] * np.sign(np.gradient(y_line))
+        mask = np.isfinite(magnitude)
+        return x_line[mask]/ self.delta, y_line[mask]/ self.delta, magnitude[mask]
 
     def __call__(self,
                  points_x: Union[List[float], Tuple[float], np.ndarray],
@@ -151,14 +155,15 @@ if __name__ == '__main__':
     co = 'data/thin_p_coordinates.pkl'
     fi = 'data/thin_p_fields.pkl'
 
-    vwl = ViscousWaveLines(co, fi, '0.02')
+    vwl = ViscousWaveLines(co, fi, '0.023')
     # -20, -14, -6, 0
     x0 = np.linspace(-11, -8, 5)
     y0 = 1e-4
     xl, yl, ml = vwl(x0, y0)
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
-    for xx, yy, mm in zip(xl, yl, ml):
-        mm[mm >= 1e10] = np.nan
+    for i, (xx, yy, mm) in enumerate(zip(xl, yl, ml)):
         ax.plot(xs=xx, ys=yy, zs=mm)
+        res = np.vstack([xx, yy, mm])
+        np.save(f'data/line{i}.npy', res)
     plt.show()
