@@ -19,9 +19,16 @@ def smooth(xyz: np.ndarray, window_size=51, polyorder=7, mode='interp', max_grad
     xy = xyz[:2, 1:]
     v = xyz[2, 1:]
     mask = np.abs(np.gradient(v)) <= max_grad
+    masked_v = v[mask]
     s = get_path_coords(xy)
-    v_hat = savgol_filter(v[mask], window_size, polyorder, mode=mode)
-    return s[mask], v[mask], v_hat
+    if window_size > masked_v.shape[0]:
+        window_size = masked_v.shape[0]
+        window_size = window_size-1 if window_size%2 ==0 else window_size
+    if window_size > polyorder:
+        v_hat = savgol_filter(masked_v, window_size, polyorder, mode=mode)
+    else:
+        v_hat = np.zeros_like(masked_v)
+    return s[mask], masked_v, v_hat
 
 def extr(x: np.ndarray, y: np.ndarray, aggr_func='max', order=3):
     assert aggr_func in 'maxmin'
@@ -36,7 +43,7 @@ def extr(x: np.ndarray, y: np.ndarray, aggr_func='max', order=3):
 
 
 if __name__ == '__main__':
-    res=np.load('data/line1.npy')
+    res=np.load('data/line3.npy')
     _s, _v, _v_hat = smooth(res)
     first_der = np.gradient(_v)
     fig, axs = plt.subplots(2)
@@ -44,6 +51,7 @@ if __name__ == '__main__':
     axs[0].plot(_s, _v_hat)
     s_max, v_max = extr(_s[_s<6], _v_hat[_s<6], 'max')
     s_min, v_min = extr(_s[_s<6], _v_hat[_s<6], 'min')
+    a= np.vstack([s_max, v_max])
     axs[0].scatter(s_min, v_min)
     axs[0].scatter(s_max, v_max)
     axs[1].plot(_s, first_der)

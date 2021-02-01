@@ -155,7 +155,7 @@ if __name__ == '__main__':
     co = 'data/thin_p_coordinates.pkl'
     fi = 'data/thin_p_fields.pkl'
 
-    vwl = ViscousWaveLines(co, fi, '0.023')
+    vwl = ViscousWaveLines(co, fi, '0.027')
     # -20, -14, -6, 0
     x0 = np.linspace(-11, -8, 5)
     y0 = 1e-4
